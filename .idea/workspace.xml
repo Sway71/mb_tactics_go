@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0d72260a-099d-4e86-b879-51ff16e8d62d" name="Default" comment="" />
+    <list default="true" id="0d72260a-099d-4e86-b879-51ff16e8d62d" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/enemyController.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hashGenerator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/battleManagement.go" beforeDir="false" afterPath="$PROJECT_DIR$/battleManagement.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/characterController.go" beforeDir="false" afterPath="$PROJECT_DIR$/characterController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.go" beforeDir="false" afterPath="$PROJECT_DIR$/index.go" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,17 +21,44 @@
       <file leaf-file-name="index.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="477">
-              <caret line="48" lean-forward="true" selection-start-line="48" selection-end-line="48" />
+            <state relative-caret-position="630">
+              <caret line="58" lean-forward="true" selection-start-line="58" selection-end-line="58" />
+              <folding>
+                <element signature="e#14#113#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mapController.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="battleManagement.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/battleManagement.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="161">
+              <caret line="49" column="38" lean-forward="true" selection-start-line="49" selection-start-column="38" selection-end-line="49" selection-end-column="38" />
+              <folding>
+                <element signature="e#14#74#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="enemyController.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/enemyController.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-670">
+              <caret line="16" column="45" selection-start-line="16" selection-start-column="38" selection-end-line="16" selection-end-column="45" />
+              <folding>
+                <element signature="e#14#117#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mapController.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mapController.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="628">
-              <caret line="95" column="6" selection-start-line="95" selection-start-column="6" selection-end-line="95" selection-end-column="6" />
+            <state relative-caret-position="720">
+              <caret line="48" column="72" lean-forward="true" selection-start-line="48" selection-start-column="34" selection-end-line="48" selection-end-column="72" />
               <folding>
                 <element signature="e#14#63#0" expanded="true" />
               </folding>
@@ -35,8 +69,8 @@
       <file leaf-file-name="characterController.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/characterController.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="530">
-              <caret line="125" column="6" lean-forward="true" selection-start-line="121" selection-start-column="4" selection-end-line="125" selection-end-column="6" />
+            <state relative-caret-position="369">
+              <caret line="31" column="20" lean-forward="true" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="20" />
               <folding>
                 <element signature="e#14#63#0" expanded="true" />
               </folding>
@@ -47,17 +81,8 @@
       <file leaf-file-name="tacticsMovement.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tacticsMovement.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
+            <state relative-caret-position="-441">
               <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="battleManagement.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/battleManagement.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" selection-start-line="9" selection-end-line="9" />
             </state>
           </provider>
         </entry>
@@ -76,10 +101,14 @@
       <find>fmt</find>
       <find>\&quot;Character\&quot;</find>
       <find>App</find>
+      <find>rand</find>
       <find>getMovableSpaces</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="/usr/local/Cellar/go/1.10.2/libexec" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -90,11 +119,13 @@
         <option value="$PROJECT_DIR$/errorHandling.go" />
         <option value="$PROJECT_DIR$/tacticsMovement.go" />
         <option value="$PROJECT_DIR$/database.go" />
-        <option value="$PROJECT_DIR$/characterController.go" />
-        <option value="$PROJECT_DIR$/index.go" />
-        <option value="$PROJECT_DIR$/battleManagement.go" />
         <option value="$PROJECT_DIR$/mapEncoding.go" />
         <option value="$PROJECT_DIR$/mapController.go" />
+        <option value="$PROJECT_DIR$/characterController.go" />
+        <option value="$PROJECT_DIR$/enemyController.go" />
+        <option value="$PROJECT_DIR$/hashGenerator.go" />
+        <option value="$PROJECT_DIR$/index.go" />
+        <option value="$PROJECT_DIR$/battleManagement.go" />
       </list>
     </option>
   </component>
@@ -107,12 +138,13 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="413" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="125" />
     <option name="y" value="23" />
-    <option name="width" value="1382" />
-    <option name="height" value="976" />
+    <option name="width" value="1220" />
+    <option name="height" value="776" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -197,17 +229,17 @@
     </recent_temporary>
   </component>
   <component name="ToolWindowManager">
-    <frame x="413" y="23" width="1382" height="976" extended-state="1" />
+    <frame x="125" y="23" width="1220" height="776" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15991317" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18114755" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5009363" side_tool="true" weight="0.21023513" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32942238" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49906367" visible="true" weight="0.21840355" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49906367" visible="true" weight="0.28062677" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -231,6 +263,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+          <folding>
+            <element signature="e#14#113#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -286,46 +321,69 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tacticsMovement.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/battleManagement.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mapEncoding.go">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.go">
+    <entry file="file://$PROJECT_DIR$/mapController.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
-          <caret line="48" lean-forward="true" selection-start-line="48" selection-end-line="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/characterController.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="530">
-          <caret line="125" column="6" lean-forward="true" selection-start-line="121" selection-start-column="4" selection-end-line="125" selection-end-column="6" />
+        <state relative-caret-position="720">
+          <caret line="48" column="72" lean-forward="true" selection-start-line="48" selection-start-column="34" selection-end-line="48" selection-end-column="72" />
           <folding>
             <element signature="e#14#63#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mapController.go">
+    <entry file="file://$PROJECT_DIR$/tacticsMovement.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="628">
-          <caret line="95" column="6" selection-start-line="95" selection-start-column="6" selection-end-line="95" selection-end-column="6" />
+        <state relative-caret-position="-441">
+          <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hashGenerator.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="17" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/characterController.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="31" column="20" lean-forward="true" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="20" />
           <folding>
             <element signature="e#14#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="58" lean-forward="true" selection-start-line="58" selection-end-line="58" />
+          <folding>
+            <element signature="e#14#113#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/enemyController.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-670">
+          <caret line="16" column="45" selection-start-line="16" selection-start-column="38" selection-end-line="16" selection-end-column="45" />
+          <folding>
+            <element signature="e#14#117#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/battleManagement.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="49" column="38" lean-forward="true" selection-start-line="49" selection-start-column="38" selection-end-line="49" selection-end-column="38" />
+          <folding>
+            <element signature="e#14#74#0" expanded="true" />
           </folding>
         </state>
       </provider>

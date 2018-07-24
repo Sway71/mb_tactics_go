@@ -33,7 +33,7 @@ type CharacterController struct {
 }
 
 func (c *CharacterController) getCharacters(w http.ResponseWriter, r *http.Request) {
-	characters := []Character{}
+	var characters []Character
 	err := c.DB.Select(&characters, "SELECT * FROM character ORDER BY id")
 	if err != nil {
 		log.Fatalln(err)
@@ -43,7 +43,7 @@ func (c *CharacterController) getCharacters(w http.ResponseWriter, r *http.Reque
 }
 
 func (c *CharacterController) getCharacter(w http.ResponseWriter, r *http.Request) {
-	character := Character{}
+	var character Character
 	id := vestigo.Param(r, "id")
 
 	err := c.DB.Get(&character, "SELECT * FROM character WHERE id=$1", id)
@@ -127,7 +127,7 @@ func (c *CharacterController) createCharacter(w http.ResponseWriter, r *http.Req
 }
 
 func (c *CharacterController) getMovableSpaces(w http.ResponseWriter, r *http.Request) {
-	character := Character{}
+	var character Character
 	id := vestigo.Param(r, "id")
 
 	err := c.DB.Get(&character, "SELECT move, x, y FROM character WHERE id=$1", id)
@@ -139,7 +139,7 @@ func (c *CharacterController) getMovableSpaces(w http.ResponseWriter, r *http.Re
 }
 
 func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
-	character := Character{}
+	var character Character
 	id := vestigo.Param(r, "id")
 
 	err := c.DB.Get(&character, "SELECT move, x, y FROM character WHERE id=$1", id)
