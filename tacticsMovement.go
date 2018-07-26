@@ -2,8 +2,7 @@ package main
 
 import (
 	"math"
-	"fmt"
-)
+	)
 
 // Location ...Might try to add meta data if it seems worthwhile
 type Location struct {
@@ -43,7 +42,7 @@ func getNeighbors(
 			newX,
 			newY,
 		}
-		fmt.Println()
+
 		if neighbor.X >= 0 && neighbor.X <= len(terrainMap)-1 && neighbor.Y >= 0 && neighbor.Y <= len(terrainMap[0])-1 {
 			neighborTile := terrainMap[neighbor.X][neighbor.Y]
 
@@ -71,37 +70,17 @@ func GetMovableSpaces(
 ) []Location {
 	var movableLocations = []Location{playerLocation}
 
-	//var terrainMap = [][]int{
-	//	{0, 0, 1, 1, 2, 3, 5},
-	//	{0, 0, 1, 2, 2, 5, 7},
-	//	{0, 0, 2, 3, 1, 3, 9},
-	//	{0, 0, 4, 2, 2, 3, 4},
-	//	{0, 0, 4, 3, 2, 3, 4},
-	//	{0, 0, 4, 3, 2, 2, 1},
-	//	{0, 0, 4, 3, 2, 1, 1},
-	//}
-
 	getNeighbors(move, jump, playerLocation, terrainMap, &movableLocations)
 
 	return movableLocations
-	//fmt.Printf("number of movable locations: %d\n", len(movableLocations))
-	//fmt.Printf("Set of movable locations: \n\t %v", movableLocations)
 }
 
-//func main() {
-//	var newPlayer = Character{
-//		"Sam",
-//		3,
-//		1,
-//		Location{2, 2},
-//	}
-//
-//	var terrainHeightMap = [][]int{
-//		{0, 0, 1, 1, 1},
-//		{0, 0, 1, 2, 2},
-//		{0, 0, 2, 3, 1},
-//		{0, 0, 4, 2, 2},
-//		{0, 0, 4, 3, 2},
-//	}
-//	getMovableSpaces(3, newPlayer.location, terrainHeightMap)
-//}
+func GetPath(
+	move int,
+	jump int,
+	playerLocation Location,
+	terrainMap [][]MapTile,
+) []Location {
+	var bestPath []Location
+	return bestPath
+}

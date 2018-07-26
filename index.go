@@ -60,7 +60,7 @@ func main() {
 	// Characters' movement routes
 	// TODO: transfer these routes and the columns in postgres to battle management routes and Redis data
 	router.Get("/battle/:battleId/movableLocations/:id", characterController.getMovableSpaces)
-	router.Post("/characters/:id/move", characterController.move)
+	router.Post("/characters/:battleId/move/:id", characterController.move)
 
 	// Battle managing routes
 	router.Post("/battle/initialize", battleManager.initializeBattle)

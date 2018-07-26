@@ -62,7 +62,6 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 		battleConfiguration.Enemies[2],
 	)
 	if err != nil {
-		fmt.Println("this error got hit")
 		log.Println(err)
 	}
 
@@ -156,12 +155,19 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			"y",
 			battleConfiguration.EnemyLocations[i].Y,
 		).Err
-		// TODO: run second command that adds location to a list of occupied spaces as "x:y"
 		if err != nil {
 			fmt.Println("adding enemies error", currEnemy)
 			log.Fatalln(err)
 		}
 
+		err = conn.Cmd(
+			"SADD",
+			battleId + ":occupiedSpaces",
+			strconv.Itoa(battleConfiguration.EnemyLocations[i].X) + ":" + strconv.Itoa(battleConfiguration.EnemyLocations[i].Y),
+		).Err
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 
 	json.NewEncoder(w).Encode(struct {

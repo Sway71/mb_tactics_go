@@ -177,13 +177,8 @@ func (c *CharacterController) getMovableSpaces(w http.ResponseWriter, r *http.Re
 }
 
 func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
-	var character Character
 	id := vestigo.Param(r, "id")
-
-	err := c.DB.Get(&character, "SELECT move, x, y FROM character WHERE id=$1", id)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	battleId := vestigo.Param(r, "battleId")
 
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -199,8 +194,50 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//validMove := ContainsPoint(GetMovableSpaces(character.Move, Location{character.X, character.Y}), location)
-	//fmt.Println(validMove)
+	conn, err := c.redisPool.Get()
+	if err != nil {
+		fmt.Println("couldn't get Redis pool connection")
+		log.Fatalln(err)
+		return
+	}
+	defer c.redisPool.Put(conn)
+
+	battlefieldId, err := conn.Cmd("GET", "battle:" + battleId + ":mapId").Str()
+
+	var battlefield Map
+	err = c.DB.Get(&battlefield, "SELECT * FROM battlefield WHERE id=$1", battlefieldId)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var battlefieldLayout [][]MapTile
+	json.Unmarshal(battlefield.MapData, &battlefieldLayout)
+
+
+	ally, err := conn.Cmd(
+		"HMGET",
+		"battle:" + battleId + ":allies:" + id,
+		"x",
+		"y",
+		"move",
+		"jump",
+	).List()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	allyX, _ := strconv.Atoi(ally[0])
+	allyY, _ := strconv.Atoi(ally[1])
+	allyMove, _ := strconv.Atoi(ally[2])
+	allyJump, _ := strconv.Atoi(ally[3])
+
+	validMove := ContainsPoint(GetMovableSpaces(
+		allyMove,
+		allyJump,
+		Location{allyX, allyY},
+		battlefieldLayout,
+	), location)
+	fmt.Println(validMove)
 	//
 	//if (validMove) {
 	//	characterMove := "UPDATE character SET x = $1, y = $2 WHERE id = $3 RETURNING x, y"
