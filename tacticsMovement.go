@@ -2,6 +2,7 @@ package main
 
 import (
 	"math"
+	"fmt"
 )
 
 // Location ...Might try to add meta data if it seems worthwhile
@@ -42,8 +43,8 @@ func getNeighbors(
 			newX,
 			newY,
 		}
-
-		if neighbor.X >= 0 && neighbor.X <= 4 && neighbor.Y >= 0 && neighbor.Y <= 4 {
+		fmt.Println()
+		if neighbor.X >= 0 && neighbor.X <= len(terrainMap)-1 && neighbor.Y >= 0 && neighbor.Y <= len(terrainMap[0])-1 {
 			neighborTile := terrainMap[neighbor.X][neighbor.Y]
 
 			if math.Abs(float64(neighborTile.Height-currentTile.Height)) < float64(jump) {

@@ -2,12 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0d72260a-099d-4e86-b879-51ff16e8d62d" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/redis.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/battleManagement.go" beforeDir="false" afterPath="$PROJECT_DIR$/battleManagement.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/characterController.go" beforeDir="false" afterPath="$PROJECT_DIR$/characterController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/enemyController.go" beforeDir="false" afterPath="$PROJECT_DIR$/enemyController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.go" beforeDir="false" afterPath="$PROJECT_DIR$/index.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tacticsMovement.go" beforeDir="false" afterPath="$PROJECT_DIR$/tacticsMovement.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,12 +20,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="go" value="223" />
+          <entry key="go" value="243" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Go" value="223" />
+          <entry key="Go" value="243" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.go.postfix.template.usages.trigger" />
@@ -51,11 +45,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/battleManagement.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="121" column="9" lean-forward="true" selection-start-line="121" selection-start-column="9" selection-end-line="121" selection-end-column="9" />
+            <state relative-caret-position="-998">
+              <caret line="74" column="24" lean-forward="true" selection-start-line="74" selection-start-column="24" selection-end-line="74" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -92,11 +86,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tacticsMovement.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-204">
-              <caret line="48" column="51" selection-start-line="48" selection-start-column="51" selection-end-line="48" selection-end-column="51" />
+            <state relative-caret-position="311">
+              <caret line="46" column="112" selection-start-line="46" selection-start-column="112" selection-end-line="46" selection-end-column="112" />
             </state>
           </provider>
         </entry>
@@ -140,9 +134,9 @@
         <option value="$PROJECT_DIR$/index.go" />
         <option value="$PROJECT_DIR$/redis.json" />
         <option value="$PROJECT_DIR$/enemyController.go" />
-        <option value="$PROJECT_DIR$/tacticsMovement.go" />
         <option value="$PROJECT_DIR$/characterController.go" />
         <option value="$PROJECT_DIR$/battleManagement.go" />
+        <option value="$PROJECT_DIR$/tacticsMovement.go" />
       </list>
     </option>
   </component>
@@ -153,10 +147,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="479" />
-    <option name="y" value="203" />
-    <option name="width" value="1291" />
-    <option name="height" value="1004" />
+    <option name="x" value="673" />
+    <option name="y" value="231" />
+    <option name="width" value="1338" />
+    <option name="height" value="1086" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -258,15 +252,15 @@
     </recent_temporary>
   </component>
   <component name="ToolWindowManager">
-    <frame x="479" y="203" width="1291" height="1004" extended-state="0" />
+    <frame x="673" y="231" width="1338" height="1086" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17373899" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16743827" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32942238" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49906367" visible="true" weight="0.17324561" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49906367" visible="true" weight="0.25452715" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -332,13 +326,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tacticsMovement.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-204">
-          <caret line="48" column="51" selection-start-line="48" selection-start-column="51" selection-end-line="48" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/characterController.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -348,8 +335,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/battleManagement.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="121" column="9" lean-forward="true" selection-start-line="121" selection-start-column="9" selection-end-line="121" selection-end-column="9" />
+        <state relative-caret-position="-998">
+          <caret line="74" column="24" lean-forward="true" selection-start-line="74" selection-start-column="24" selection-end-line="74" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tacticsMovement.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="46" column="112" selection-start-line="46" selection-start-column="112" selection-end-line="46" selection-end-column="112" />
         </state>
       </provider>
     </entry>
