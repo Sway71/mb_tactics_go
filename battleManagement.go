@@ -44,7 +44,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 	var allies []Character
 	err = bmController.DB.Select(
 		&allies,
-		"SELECT id, name, maxhp, maxmp FROM character WHERE id IN ($1, $2, $3)",
+		"SELECT * FROM character WHERE id IN ($1, $2, $3)",
 		battleConfiguration.Allies[0],
 		battleConfiguration.Allies[1],
 		battleConfiguration.Allies[2],
@@ -56,13 +56,13 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 	var enemies []Enemy
 	err = bmController.DB.Select(
 		&enemies,
-		"SELECT id, name, maxhp, maxmp FROM enemy WHERE id IN ($1, $2, $3)",
+		"SELECT name, maxhp, maxmp, move, jump FROM enemy WHERE id IN ($1, $2, $3)",
 		battleConfiguration.Enemies[0],
 		battleConfiguration.Enemies[1],
 		battleConfiguration.Enemies[2],
 	)
-	fmt.Println(enemies)
 	if err != nil {
+		fmt.Println("this error got hit")
 		log.Println(err)
 	}
 
@@ -73,8 +73,11 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 	if err != nil {
 		fmt.Println("couldn't get Redis pool connection")
 		log.Fatalln(err)
+		return
 	}
 	defer bmController.redisPool.Put(conn)
+
+	err = conn.Cmd("SET", battleId + ":mapId", battleConfiguration.MapId).Err
 
 	// Add allies to battle in Redis
 	for i := 0; i < len(battleConfiguration.Allies); i++ {
@@ -87,6 +90,10 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			currAlly.Id,
 			"name",
 			currAlly.Name,
+			"move",
+			currAlly.Move,
+			"jump",
+			currAlly.Jump,
 			"HP",
 			currAlly.MaxHP,
 			"maxHP",
@@ -95,9 +102,22 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			currAlly.MaxMP,
 			"maxMP",
 			currAlly.MaxMP,
+			"x",
+			battleConfiguration.AllyLocations[i].X,
+			"y",
+			battleConfiguration.AllyLocations[i].Y,
 		).Err
 		if err != nil {
 			fmt.Println("adding allies error")
+			log.Fatalln(err)
+		}
+		// TODO: Adds location to a list of occupied spaces as "x:y"
+		err = conn.Cmd(
+			"SADD",
+			battleId + ":occupiedSpaces",
+			strconv.Itoa(battleConfiguration.AllyLocations[i].X) + ":" + strconv.Itoa(battleConfiguration.AllyLocations[i].Y),
+		).Err
+		if err != nil {
 			log.Fatalln(err)
 		}
 	}
@@ -110,7 +130,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 				currEnemy = enemyData
 			}
 		}
-		// currEnemy = enemies[i]
+
 		enemyRef := battleId + ":enemies:" + strconv.Itoa(i)
 		err = conn.Cmd(
 			"HMSET",
@@ -119,6 +139,10 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			currEnemy.Id,
 			"name",
 			currEnemy.Name,
+			"move",
+			currEnemy.Move,
+			"jump",
+			currEnemy.Jump,
 			"HP",
 			currEnemy.MaxHP,
 			"maxHP",
@@ -127,31 +151,42 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			currEnemy.MaxMP,
 			"maxMP",
 			currEnemy.MaxMP,
+			"x",
+			battleConfiguration.EnemyLocations[i].X,
+			"y",
+			battleConfiguration.EnemyLocations[i].Y,
 		).Err
+		// TODO: run second command that adds location to a list of occupied spaces as "x:y"
 		if err != nil {
 			fmt.Println("adding enemies error", currEnemy)
 			log.Fatalln(err)
 		}
+
 	}
 
-	enemy0, err := conn.Cmd("HGETALL", battleId + ":enemies:0").Map()
-	if err != nil {
-		fmt.Println("Redis GET command failed")
-		log.Fatalln(err)
-	}
-	fmt.Println(enemy0)
-
-	enemy1, err := conn.Cmd("HGETALL", battleId + ":enemies:1").Map()
-	if err != nil {
-		fmt.Println("Redis GET command failed")
-		log.Fatalln(err)
-	}
-	fmt.Println(enemy1)
-
-	enemy2, err := conn.Cmd("HGETALL", battleId + ":enemies:2").Map()
-	if err != nil {
-		fmt.Println("Redis GET command failed")
-		log.Fatalln(err)
-	}
-	fmt.Println(enemy2)
+	json.NewEncoder(w).Encode(struct {
+		BattleId 	string	 `json:"battleId"`
+	}{
+		battleId[7:27],
+	})
+	//enemy0, err := conn.Cmd("HGETALL", battleId + ":enemies:0").Map()
+	//if err != nil {
+	//	fmt.Println("Redis GET command failed")
+	//	log.Fatalln(err)
+	//}
+	//fmt.Println(enemy0)
+	//
+	//enemy1, err := conn.Cmd("HGETALL", battleId + ":enemies:1").Map()
+	//if err != nil {
+	//	fmt.Println("Redis GET command failed")
+	//	log.Fatalln(err)
+	//}
+	//fmt.Println(enemy1)
+	//
+	//enemy2, err := conn.Cmd("HGETALL", battleId + ":enemies:2").Map()
+	//if err != nil {
+	//	fmt.Println("Redis GET command failed")
+	//	log.Fatalln(err)
+	//}
+	//fmt.Println(enemy2)
 }

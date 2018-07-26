@@ -14,12 +14,15 @@ type Enemy struct {
 	Name 		string			`json:"name"`
 	Level		int				`json:"level"`
 	Exp			int				`json:"exp"`
+	HP			int				`json:"hp"`
+	MP			int				`json:"mp"`
 	MaxHP		int				`json:"maxHp"`
 	MaxMP		int				`json:"maxMp"`
 	Strength	int				`json:"strength"`
 	Speed		int				`json:"speed"`
 	Move		int				`json:"move"`
 	Jump 		int				`json:"jump"`
+	Skills		[]string		`json:"skills"`
 }
 
 type EnemyController struct {

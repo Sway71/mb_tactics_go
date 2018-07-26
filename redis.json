@@ -1,0 +1,46 @@
+{
+  "battle": {
+    "{battleId}": {
+      "mapId": 3,
+      "occupiedSpaces": [
+        "1:1",
+        "2:3"
+      ],
+      "objects": {
+
+      },
+      "objectLocations": [
+
+      ],
+      "allies": {
+        "0": {
+          "id": 7,
+          "name": "Spook",
+          "move": 4,
+          "jump": 3,
+          "HP": 32,
+          "maxHP": 45,
+          "MP": 12,
+          "maxMP": 17,
+          "x": 1,
+          "y": 1
+        }
+      },
+      "enemies": {
+        "0": {
+          "id": 1,
+          "name": "zombie",
+          "move": 2,
+          "jump": 2,
+          "HP": 12,
+          "maxHP": 25,
+          "MP": 3,
+          "maxMP": 3,
+          "x": 2,
+          "y": 3
+        }
+      }
+    }
+
+  }
+}

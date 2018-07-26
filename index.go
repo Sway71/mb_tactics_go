@@ -33,7 +33,7 @@ func main() {
 
 	// Controller declarations (Postgres)
 	mapController := MapController{db}
-	characterController := CharacterController{db}
+	characterController := CharacterController{redisPool, db}
 	enemyController := EnemyController{db}
 
 	// Controller declarations (Redis)
@@ -59,7 +59,7 @@ func main() {
 
 	// Characters' movement routes
 	// TODO: transfer these routes and the columns in postgres to battle management routes and Redis data
-	router.Get("/characters/:id/movableLocations", characterController.getMovableSpaces)
+	router.Get("/battle/:battleId/movableLocations/:id", characterController.getMovableSpaces)
 	router.Post("/characters/:id/move", characterController.move)
 
 	// Battle managing routes

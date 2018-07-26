@@ -22,8 +22,9 @@ func ContainsPoint(pointsSlice []Location, pointToCheck Location) bool {
 
 func getNeighbors(
 	move int,
+	jump int,
 	playerLocation Location,
-	terrainMap [][]int,
+	terrainMap [][]MapTile,
 	movableLocations *[]Location,
 ) {
 	var directions = []Location{
@@ -33,7 +34,7 @@ func getNeighbors(
 		{-1, 0},
 	}
 
-	var currentHeight = terrainMap[playerLocation.X][playerLocation.Y]
+	var currentTile = terrainMap[playerLocation.X][playerLocation.Y]
 
 	for _, direction := range directions {
 		newX, newY := playerLocation.X+direction.X, playerLocation.Y+direction.Y
@@ -43,13 +44,13 @@ func getNeighbors(
 		}
 
 		if neighbor.X >= 0 && neighbor.X <= 4 && neighbor.Y >= 0 && neighbor.Y <= 4 {
-			neighborHeight := terrainMap[neighbor.X][neighbor.Y]
+			neighborTile := terrainMap[neighbor.X][neighbor.Y]
 
-			if math.Abs(float64(neighborHeight-currentHeight)) < 2 {
+			if math.Abs(float64(neighborTile.Height-currentTile.Height)) < float64(jump) {
 
 				// recursively look for other movable locations if player still has moves left
 				if move > 1 {
-					getNeighbors(move-1, neighbor, terrainMap, movableLocations)
+					getNeighbors(move-1, jump, neighbor, terrainMap, movableLocations)
 				}
 
 				if !ContainsPoint(*movableLocations, neighbor) {
@@ -63,22 +64,23 @@ func getNeighbors(
 
 func GetMovableSpaces(
 	move int,
+	jump int,
 	playerLocation Location,
-	// terrainMap [][]int,
+	terrainMap [][]MapTile,
 ) []Location {
 	var movableLocations = []Location{playerLocation}
 
-	var terrainMap = [][]int{
-		{0, 0, 1, 1, 2, 3, 5},
-		{0, 0, 1, 2, 2, 5, 7},
-		{0, 0, 2, 3, 1, 3, 9},
-		{0, 0, 4, 2, 2, 3, 4},
-		{0, 0, 4, 3, 2, 3, 4},
-		{0, 0, 4, 3, 2, 2, 1},
-		{0, 0, 4, 3, 2, 1, 1},
-	}
+	//var terrainMap = [][]int{
+	//	{0, 0, 1, 1, 2, 3, 5},
+	//	{0, 0, 1, 2, 2, 5, 7},
+	//	{0, 0, 2, 3, 1, 3, 9},
+	//	{0, 0, 4, 2, 2, 3, 4},
+	//	{0, 0, 4, 3, 2, 3, 4},
+	//	{0, 0, 4, 3, 2, 2, 1},
+	//	{0, 0, 4, 3, 2, 1, 1},
+	//}
 
-	getNeighbors(move, playerLocation, terrainMap, &movableLocations)
+	getNeighbors(move, jump, playerLocation, terrainMap, &movableLocations)
 
 	return movableLocations
 	//fmt.Printf("number of movable locations: %d\n", len(movableLocations))

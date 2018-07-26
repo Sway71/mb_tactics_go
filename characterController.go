@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"fmt"
+	"github.com/mediocregopher/radix.v2/pool"
+	"strconv"
 )
 
 type Character struct {
@@ -24,12 +26,11 @@ type Character struct {
 	Speed		int				`json:"speed"`
 	Move		int				`json:"move"`
 	Jump 		int				`json:"jump"`
-	X 			int				`json:"x"`
-	Y 			int				`json:"y"`
 }
 
 type CharacterController struct {
-	DB		*sqlx.DB
+	redisPool		*pool.Pool
+	DB				*sqlx.DB
 }
 
 func (c *CharacterController) getCharacters(w http.ResponseWriter, r *http.Request) {
@@ -127,15 +128,52 @@ func (c *CharacterController) createCharacter(w http.ResponseWriter, r *http.Req
 }
 
 func (c *CharacterController) getMovableSpaces(w http.ResponseWriter, r *http.Request) {
-	var character Character
 	id := vestigo.Param(r, "id")
+	battleId := vestigo.Param(r, "battleId")
 
-	err := c.DB.Get(&character, "SELECT move, x, y FROM character WHERE id=$1", id)
+	conn, err := c.redisPool.Get()
+	if err != nil {
+		fmt.Println("couldn't get Redis pool connection")
+		log.Fatalln(err)
+		return
+	}
+	defer c.redisPool.Put(conn)
+
+	battlefieldId, err := conn.Cmd("GET", "battle:" + battleId + ":mapId").Str()
+
+	var battlefield Map
+	err = c.DB.Get(&battlefield, "SELECT * FROM battlefield WHERE id=$1", battlefieldId)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	json.NewEncoder(w).Encode(GetMovableSpaces(character.Move, Location{character.X, character.Y}))
+	var battlefieldLayout [][]MapTile
+	json.Unmarshal(battlefield.MapData, &battlefieldLayout)
+
+
+	ally, err := conn.Cmd(
+		"HMGET",
+		"battle:" + battleId + ":allies:" + id,
+		"x",
+		"y",
+		"move",
+		"jump",
+	).List()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	allyX, _ := strconv.Atoi(ally[0])
+	allyY, _ := strconv.Atoi(ally[1])
+	allyMove, _ := strconv.Atoi(ally[2])
+	allyJump, _ := strconv.Atoi(ally[3])
+
+	json.NewEncoder(w).Encode(GetMovableSpaces(
+		allyMove,
+		allyJump,
+		Location{allyX, allyY},
+		battlefieldLayout,
+	))
 }
 
 func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
@@ -161,27 +199,27 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	validMove := ContainsPoint(GetMovableSpaces(character.Move, Location{character.X, character.Y}), location)
-	fmt.Println(validMove)
-
-	if (validMove) {
-		characterMove := "UPDATE character SET x = $1, y = $2 WHERE id = $3 RETURNING x, y"
-		result := c.DB.MustExec(characterMove, location.X, location.Y, id)
-		rowsAffected, _ := result.RowsAffected()
-
-		wasSuccessful := rowsAffected == 1
-		json.NewEncoder(w).Encode(struct {
-			Success bool `json:"success"`
-		}{
-			wasSuccessful,
-		})
-	} else {
-		json.NewEncoder(w).Encode(struct {
-			Success bool `json:"success"`
-		}{
-			false,
-		})
-	}
+	//validMove := ContainsPoint(GetMovableSpaces(character.Move, Location{character.X, character.Y}), location)
+	//fmt.Println(validMove)
+	//
+	//if (validMove) {
+	//	characterMove := "UPDATE character SET x = $1, y = $2 WHERE id = $3 RETURNING x, y"
+	//	result := c.DB.MustExec(characterMove, location.X, location.Y, id)
+	//	rowsAffected, _ := result.RowsAffected()
+	//
+	//	wasSuccessful := rowsAffected == 1
+	//	json.NewEncoder(w).Encode(struct {
+	//		Success bool `json:"success"`
+	//	}{
+	//		wasSuccessful,
+	//	})
+	//} else {
+	//	json.NewEncoder(w).Encode(struct {
+	//		Success bool `json:"success"`
+	//	}{
+	//		false,
+	//	})
+	//}
 }
 //
 //func (c *CharacterController) attack(w http.ResponseWriter, r *http.Request) {
