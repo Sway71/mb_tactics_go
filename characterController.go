@@ -176,6 +176,7 @@ func (c *CharacterController) getMovableSpaces(w http.ResponseWriter, r *http.Re
 	))
 }
 
+// TODO: move to battle management controller.
 func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 	id := vestigo.Param(r, "id")
 	battleId := vestigo.Param(r, "battleId")

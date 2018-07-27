@@ -1,9 +1,5 @@
 package main
 
-import (
-	"math"
-	)
-
 // Location ...Might try to add meta data if it seems worthwhile
 type Location struct {
 	X int	`json:"x"`
@@ -46,11 +42,21 @@ func getNeighbors(
 		if neighbor.X >= 0 && neighbor.X <= len(terrainMap)-1 && neighbor.Y >= 0 && neighbor.Y <= len(terrainMap[0])-1 {
 			neighborTile := terrainMap[neighbor.X][neighbor.Y]
 
-			if math.Abs(float64(neighborTile.Height-currentTile.Height)) < float64(jump) {
+			// in reality the following items still need to be taken into account:
+			// 1. a character can jump down further than they can jump up, ?(jump vs. jump - 1)?	#needsTesting
+			// 2. the cost for jumping up is higher than jumping down (2 vs 1)						#needsTesting
+			// 3. certain types of terrain cost more to move across (probably only matters for water)
+			// 4. jumping across gaps or over enemies (long term goal)
+			cost := 1
+			if neighborTile.Height-currentTile.Height > jump/2 {
+				cost = 2
+			}
+			//if math.Abs(float64(neighborTile.Height-currentTile.Height)) < float64(jump) {
+			if neighborTile.Height-currentTile.Height < jump || currentTile.Height-neighborTile.Height <= jump {
 
 				// recursively look for other movable locations if player still has moves left
-				if move > 1 {
-					getNeighbors(move-1, jump, neighbor, terrainMap, movableLocations)
+				if move > cost {
+					getNeighbors(move-cost, jump, neighbor, terrainMap, movableLocations)
 				}
 
 				if !ContainsPoint(*movableLocations, neighbor) {
