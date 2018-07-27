@@ -237,26 +237,25 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 		Location{allyX, allyY},
 		battlefieldLayout,
 	), location)
+
 	fmt.Println(validMove)
-	//
-	//if (validMove) {
-	//	characterMove := "UPDATE character SET x = $1, y = $2 WHERE id = $3 RETURNING x, y"
-	//	result := c.DB.MustExec(characterMove, location.X, location.Y, id)
-	//	rowsAffected, _ := result.RowsAffected()
-	//
-	//	wasSuccessful := rowsAffected == 1
-	//	json.NewEncoder(w).Encode(struct {
-	//		Success bool `json:"success"`
-	//	}{
-	//		wasSuccessful,
-	//	})
-	//} else {
-	//	json.NewEncoder(w).Encode(struct {
-	//		Success bool `json:"success"`
-	//	}{
-	//		false,
-	//	})
-	//}
+
+	if (validMove) {
+
+		// TODO: if the move is valid, use path finding algorithm (A*) to return success message and path
+
+		json.NewEncoder(w).Encode(struct {
+			Success 	bool	 `json:"success"`
+		}{
+			validMove,
+		})
+	} else {
+		json.NewEncoder(w).Encode(struct {
+			Success 	bool 	`json:"success"`
+		}{
+			false,
+		})
+	}
 }
 //
 //func (c *CharacterController) attack(w http.ResponseWriter, r *http.Request) {

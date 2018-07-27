@@ -65,9 +65,6 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 		log.Println(err)
 	}
 
-	// TODO: make a better method for creating a random hash
-	battleId := "battle:" + RandomString(20)
-
 	conn, err := bmController.redisPool.Get()
 	if err != nil {
 		fmt.Println("couldn't get Redis pool connection")
@@ -75,6 +72,18 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 		return
 	}
 	defer bmController.redisPool.Put(conn)
+
+	// TODO: make a better method for creating a random hash
+	var battleId string
+	exists := 1
+	for exists == 1 {
+		battleId = "battle:" + RandomString(32)[:30]
+		exists, err = conn.Cmd("EXISTS", battleId + ":mapId").Int()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}
 
 	err = conn.Cmd("SET", battleId + ":mapId", battleConfiguration.MapId).Err
 
@@ -173,7 +182,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 	json.NewEncoder(w).Encode(struct {
 		BattleId 	string	 `json:"battleId"`
 	}{
-		battleId[7:27],
+		battleId[7:],
 	})
 	//enemy0, err := conn.Cmd("HGETALL", battleId + ":enemies:0").Map()
 	//if err != nil {
