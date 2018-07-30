@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"log"
 	"encoding/base64"
+	"strings"
 )
 
 func RandomString(n int) string {
@@ -13,5 +14,5 @@ func RandomString(n int) string {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return base64.URLEncoding.EncodeToString(b)
+	return strings.Replace(base64.URLEncoding.EncodeToString(b), "-", "_", -1)
 }

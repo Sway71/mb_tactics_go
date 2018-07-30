@@ -168,11 +168,16 @@ func (c *CharacterController) getMovableSpaces(w http.ResponseWriter, r *http.Re
 	allyMove, _ := strconv.Atoi(ally[2])
 	allyJump, _ := strconv.Atoi(ally[3])
 
+	allySpaces, err := conn.Cmd("SMEMBERS", "battle:" + battleId + ":allySpaces").List()
+	enemySpaces, err := conn.Cmd("SMEMBERS", "battle:" + battleId + ":enemySpaces").List()
+
 	json.NewEncoder(w).Encode(GetMovableSpaces(
 		allyMove,
 		allyJump,
 		Location{allyX, allyY},
 		battlefieldLayout,
+		allySpaces,
+		enemySpaces,
 	))
 }
 
@@ -232,11 +237,19 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 	allyMove, _ := strconv.Atoi(ally[2])
 	allyJump, _ := strconv.Atoi(ally[3])
 
+
+	allySpaces, err := conn.Cmd("SMEMBERS", "battle:" + battleId + ":allySpaces").List()
+	enemySpaces, err := conn.Cmd("SMEMBERS", "battle:" + battleId + ":enemySpaces").List()
+	fmt.Println(allySpaces)
+	fmt.Println(enemySpaces)
+
 	validMove := ContainsPoint(GetMovableSpaces(
 		allyMove,
 		allyJump,
 		Location{allyX, allyY},
 		battlefieldLayout,
+		allySpaces,
+		enemySpaces,
 	), location)
 
 	fmt.Println(validMove)

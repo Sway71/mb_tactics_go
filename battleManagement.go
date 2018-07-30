@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"github.com/jmoiron/sqlx"
+	"math/rand"
 )
 
 type BattleManagementController struct {
@@ -114,6 +115,8 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			battleConfiguration.AllyLocations[i].X,
 			"y",
 			battleConfiguration.AllyLocations[i].Y,
+			"timeGauge",
+			currAlly.Speed * rand.Intn(5),
 		).Err
 		if err != nil {
 			fmt.Println("adding allies error")
@@ -122,7 +125,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 		// TODO: Adds location to a list of occupied spaces as "x:y"
 		err = conn.Cmd(
 			"SADD",
-			battleId + ":occupiedSpaces",
+			battleId + ":allySpaces",
 			strconv.Itoa(battleConfiguration.AllyLocations[i].X) + ":" + strconv.Itoa(battleConfiguration.AllyLocations[i].Y),
 		).Err
 		if err != nil {
@@ -171,7 +174,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 
 		err = conn.Cmd(
 			"SADD",
-			battleId + ":occupiedSpaces",
+			battleId + ":enemySpaces",
 			strconv.Itoa(battleConfiguration.EnemyLocations[i].X) + ":" + strconv.Itoa(battleConfiguration.EnemyLocations[i].Y),
 		).Err
 		if err != nil {
