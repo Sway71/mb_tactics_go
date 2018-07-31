@@ -54,7 +54,7 @@ func getNeighbors(
 			// 4. jumping across gaps or over enemies (long term goal)
 			// 5. occupied (thus not movable) spaces for allies (passable) and enemies (blocked)	#needsTesting
 			cost := 1
-			fmt.Println(neighborTile)
+
 			if neighborTile.Height-currentTile.Height > jump/2 {
 				cost = 2
 			} else if neighborTile.Terrain == "deep_water" {
@@ -112,73 +112,110 @@ func getNextStep(
 	terrainMap [][]MapTile,
 	enemySpaces []Location,
 	pathSoFar []Location,
-) []Location {
+	bestPath *[]Location,
+) {
 	// TODO: a lot of the conditionals below are repeats of algorithm above. extract into function if applicable
+	// TODO: should I use some of the logic below to completely replace the algorithm above?
 	var currentTile = terrainMap[playerLocation.X][playerLocation.Y]
 
-	for _, direction := range directions {
-		newX, newY := playerLocation.X+direction.X, playerLocation.Y+direction.Y
-		var neighbor = Location{
-			newX,
-			newY,
-		}
+	frontier := []Location{playerLocation}
+	cameFromMap := map[Location]Location{playerLocation: playerLocation}
+	costSoFarMap := map[Location]int{playerLocation: 0}
 
-		if neighbor.X >= 0 && neighbor.X <= len(terrainMap)-1 && neighbor.Y >= 0 && neighbor.Y <= len(terrainMap[0])-1 {
-			neighborTile := terrainMap[neighbor.X][neighbor.Y]
+	// TODO: the below method is only partially done, I need to use cameFromMap and costSoFarMap to reverse-lookup the path
+	for i := 1; i <= move; i++ {
+		for _, frontierPoint := range frontier {
+			for _, direction := range directions {
 
-			cost := 1
-			if neighborTile.Height-currentTile.Height > jump/2 {
-				cost = 2
-			} else if neighborTile.Terrain == "deep_water" {
-				cost = move
-			}
+				// creating the location, making sure it exists, then adding it to the correct group based on cost
+				newLocation := Location{frontierPoint.X+direction.X, frontierPoint.Y+direction.Y}
+				if newLocation.X >= 0 && newLocation.X <= len(terrainMap)-1 &&
+					newLocation.Y >= 0 && newLocation.Y <= len(terrainMap[0])-1 {
 
-			if (neighborTile.Height-currentTile.Height < jump ||
-				currentTile.Height-neighborTile.Height <= jump) &&
-				!ContainsPoint(enemySpaces, neighbor) {
-				newPath := append(append([]Location{}, pathSoFar...), neighbor)
-				// check if it is the desired location
-				if neighbor.X == newLocation.X && neighbor.Y == newLocation.Y {
-					return newPath
-				} else if move > cost {
-
-					return getNextStep(
-						move,
-						jump,
-						neighbor,
-						newLocation,
-						terrainMap,
-						enemySpaces,
-						newPath,
-					)
+					newTile := terrainMap[newLocation.X][newLocation.Y]
+					if !ContainsPoint(frontier, newLocation) &&
+						!ContainsPoint(enemySpaces, newLocation)  {
+						frontier = append(frontier, newLocation)
+						cameFromMap[newLocation] = frontierPoint
+						if newTile.Height-currentTile.Height > jump/2 {
+							costSoFarMap[newLocation] = costSoFarMap[frontierPoint] + 2
+						} else if newTile.Terrain == "deep_water" {
+							costSoFarMap[newLocation] = move
+						} else {
+							costSoFarMap[newLocation] = costSoFarMap[frontierPoint] + 1
+						}
+					}
 				}
+
 			}
 		}
 	}
+
+	fmt.Println(frontier)
+	fmt.Printf("%v \n", costSoFarMap)
+	fmt.Printf("%v \n", cameFromMap)
+
 }
 
 func GetPath(
 	move int,
 	jump int,
 	playerLocation Location,
-	newLocation Location,
+	goalLocation Location,
 	terrainMap [][]MapTile,
 	enemySpaces []string,
 ) []Location {
-	var bestPath []Location
-	// keeping it simple as the cost of path doesn't affect anything and move distance should be 3-5 realistically
-	// essentially breadth first search
-	// 1. run function on all neighbor tiles that checks if they are accessible and then starts a list
-	// 2. recursively run this function on neighbor tiles still in frontier until one of the paths reaches the endpoint
-	// 3. return list of tiles for successful path as json
-	bestPath = getNextStep(
-		move,
-		jump,
-		playerLocation,
-		newLocation,
-		terrainMap,
-		ConvertStringToCoords(enemySpaces),
-		[]Location{},
-	)
+	bestPath := []Location{goalLocation}
+
+	// TODO: a lot of the conditionals below are repeats of algorithm above. extract into function if applicable
+	// TODO: should I use some of the logic below to completely replace the algorithm above?
+	var currentTile = terrainMap[playerLocation.X][playerLocation.Y]
+
+	frontier := []Location{playerLocation}
+	cameFromMap := map[Location]Location{playerLocation: playerLocation}
+	costSoFarMap := map[Location]int{playerLocation: 0}
+
+	// TODO: the below method is only partially done, I need to use cameFromMap and costSoFarMap to reverse-lookup the path
+	for i := 1; i <= move; i++ {
+		for _, frontierPoint := range frontier {
+			for _, direction := range directions {
+
+				// creating the location, making sure it exists, then adding it to the correct group based on cost
+				newLocation := Location{frontierPoint.X+direction.X, frontierPoint.Y+direction.Y}
+				if newLocation.X >= 0 && newLocation.X <= len(terrainMap)-1 &&
+					newLocation.Y >= 0 && newLocation.Y <= len(terrainMap[0])-1 {
+
+					// TODO: populate maps and do early return if at goal unless we want to randomize paths
+					newTile := terrainMap[newLocation.X][newLocation.Y]
+					if !ContainsPoint(frontier, newLocation) &&
+						!ContainsPoint(ConvertStringToCoords(enemySpaces), newLocation)  {
+						frontier = append(frontier, newLocation)
+						cameFromMap[newLocation] = frontierPoint
+						if newTile.Height-currentTile.Height > jump/2 {
+							costSoFarMap[newLocation] = costSoFarMap[frontierPoint] + 2
+						} else if newTile.Terrain == "deep_water" {
+							costSoFarMap[newLocation] = move
+						} else {
+							costSoFarMap[newLocation] = costSoFarMap[frontierPoint] + 1
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	fmt.Println(frontier)
+	fmt.Printf("%v \n", costSoFarMap)
+	fmt.Printf("%v \n", cameFromMap)
+
+	currLocation := goalLocation
+	var nextLocation Location
+	for currLocation.X != playerLocation.X && currLocation.Y != playerLocation.Y {
+		nextLocation = cameFromMap[currLocation]
+		bestPath = append(bestPath, nextLocation)
+		currLocation = nextLocation
+	}
+	fmt.Printf("bestPath: %v \n", bestPath)
 	return bestPath
 }

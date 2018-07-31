@@ -26,6 +26,7 @@ type Character struct {
 	Speed		int				`json:"speed"`
 	Move		int				`json:"move"`
 	Jump 		int				`json:"jump"`
+	EquipmentId	int				`json:"equipmentId" db:"equipment_id"`
 }
 
 type CharacterController struct {
@@ -240,8 +241,6 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 
 	allySpaces, err := conn.Cmd("SMEMBERS", "battle:" + battleId + ":allySpaces").List()
 	enemySpaces, err := conn.Cmd("SMEMBERS", "battle:" + battleId + ":enemySpaces").List()
-	fmt.Println(allySpaces)
-	fmt.Println(enemySpaces)
 
 	validMove := ContainsPoint(GetMovableSpaces(
 		allyMove,
@@ -252,20 +251,38 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 		enemySpaces,
 	), location)
 
-	fmt.Println(validMove)
-
-	if (validMove) {
+	if validMove {
 
 		// TODO: if the move is valid, use path finding algorithm (A*) to return success message and path
+		pathToDestination := GetPath(
+			allyMove,
+			allyJump,
+			Location{allyX, allyY},
+			location,
+			battlefieldLayout,
+			enemySpaces,
+		)
+
+		err = conn.Cmd("SREM", "battle:" + battleId + ":allySpaces", ally[0] + ":" + ally[1]).Err
+		err = conn.Cmd("SADD", "battle:" + battleId + ":allySpaces", strconv.Itoa(location.X) + ":" + strconv.Itoa(location.Y)).Err
+		err = conn.Cmd("HMSET", "battle:" + battleId + ":allies:" + id, "x", location.X, "y", location.Y).Err
+		if err != nil {
+			// TODO: decide on proper error to throw
+			fmt.Println("error trying to update new ally location in Redis")
+		}
+		allyValues, _ := conn.Cmd("HGETALL", "battle:" + battleId + ":allies:" + id).List()
+		fmt.Println(allyValues)
 
 		json.NewEncoder(w).Encode(struct {
-			Success 	bool	 `json:"success"`
+			Success 			bool			`json:"success"`
+			PathToDestination	[]Location		`json:"pathToDestination"`
 		}{
 			validMove,
+			pathToDestination,
 		})
 	} else {
 		json.NewEncoder(w).Encode(struct {
-			Success 	bool 	`json:"success"`
+			Success 			bool		 	`json:"success"`
 		}{
 			false,
 		})

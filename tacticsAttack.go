@@ -39,13 +39,15 @@ func checkAttackRange(attackMinRange int, attackMaxRange int, attackerLocation L
 // TODO: need to make sure that the attack function can be handled without having the weapon id passed
 // as we need to just make sure it is simply the weapon currently equipped by the character
 // TODO: implement method for keeping track of equipped weapons...
-func calcWeaponDamage(weapon Weapon, character Character, attackerLocation Location, victimLocation Location) int {
+func calcWeaponDamage(weapon Weapon, character Character, attackerLocation Location, victimLocation Location) (int, string) {
 	if checkAttackRange(
 		weaponMinRange[weapon.Type],
 		weaponMaxRange[weapon.Type],
 		attackerLocation,
 		victimLocation,
 	) {
-		return weaponDamage[weapon.Type](character, weapon.WeaponStrength)
+		// TODO: check to hit here as well maybe? Should have thought this through better...
+		return weaponDamage[weapon.Type](character, weapon.WeaponStrength), "success"
 	}
+	return 0, "invalid"
 }
