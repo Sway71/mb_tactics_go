@@ -25,7 +25,6 @@ type BattleConfiguration struct {
 	EnemyLocations			[]Location			`json:"enemyLocations"`
 }
 
-
 func (bmController *BattleManagementController) initializeBattle(w http.ResponseWriter, r *http.Request) {
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -57,7 +56,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 	var enemies []Enemy
 	err = bmController.DB.Select(
 		&enemies,
-		"SELECT name, maxhp, maxmp, move, jump FROM enemy WHERE id IN ($1, $2, $3)",
+		"SELECT id, name, maxhp, maxmp, move, jump, speed FROM enemy WHERE id IN ($1, $2, $3)",
 		battleConfiguration.Enemies[0],
 		battleConfiguration.Enemies[1],
 		battleConfiguration.Enemies[2],
@@ -89,9 +88,11 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 	err = conn.Cmd("SET", battleId + ":mapId", battleConfiguration.MapId).Err
 
 	// Add allies to battle in Redis
+	var characterTimeInfo []TimeInfo
 	for i := 0; i < len(battleConfiguration.Allies); i++ {
 		currAlly := allies[i]
 		allyRef := battleId + ":allies:" + strconv.Itoa(currAlly.Id)
+		allyTimeGauge := rand.Intn(800)
 		err = conn.Cmd(
 			"HMSET",
 			allyRef,
@@ -116,13 +117,13 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			"y",
 			battleConfiguration.AllyLocations[i].Y,
 			"timeGauge",
-			currAlly.Speed * rand.Intn(5),
+			allyTimeGauge,
 		).Err
 		if err != nil {
 			fmt.Println("adding allies error")
 			log.Fatalln(err)
 		}
-		// TODO: Adds location to a list of occupied spaces as "x:y"
+		// Adds location to a list of occupied spaces as "x:y"
 		err = conn.Cmd(
 			"SADD",
 			battleId + ":allySpaces",
@@ -131,6 +132,16 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 		if err != nil {
 			log.Fatalln(err)
 		}
+
+
+		characterTimeInfo = append(
+			characterTimeInfo,
+			TimeInfo{
+				currAlly.Id,
+				currAlly.Speed,
+				allyTimeGauge,
+				false,
+			})
 	}
 
 	// Add enemies to battle in Redis
@@ -143,6 +154,8 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 		}
 
 		enemyRef := battleId + ":enemies:" + strconv.Itoa(i)
+		enemyTimeGauge := rand.Intn(800)
+
 		err = conn.Cmd(
 			"HMSET",
 			enemyRef,
@@ -166,6 +179,8 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			battleConfiguration.EnemyLocations[i].X,
 			"y",
 			battleConfiguration.EnemyLocations[i].Y,
+			"timeGauge",
+			enemyTimeGauge,
 		).Err
 		if err != nil {
 			fmt.Println("adding enemies error", currEnemy)
@@ -180,31 +195,25 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 		if err != nil {
 			log.Fatalln(err)
 		}
+
+		characterTimeInfo = append(
+			characterTimeInfo,
+			TimeInfo{
+				i,
+				currEnemy.Speed,
+				enemyTimeGauge,
+				true,
+			})
 	}
 
+	turnOrder := GetTurnOrder(characterTimeInfo)
+
 	json.NewEncoder(w).Encode(struct {
-		BattleId 	string	 `json:"battleId"`
+		BattleId 		string	 		`json:"battleId"`
+		TurnOrder		[]TimeInfo		`json:"turnOrder"`
 	}{
 		battleId[7:],
+		turnOrder,
 	})
-	//enemy0, err := conn.Cmd("HGETALL", battleId + ":enemies:0").Map()
-	//if err != nil {
-	//	fmt.Println("Redis GET command failed")
-	//	log.Fatalln(err)
-	//}
-	//fmt.Println(enemy0)
-	//
-	//enemy1, err := conn.Cmd("HGETALL", battleId + ":enemies:1").Map()
-	//if err != nil {
-	//	fmt.Println("Redis GET command failed")
-	//	log.Fatalln(err)
-	//}
-	//fmt.Println(enemy1)
-	//
-	//enemy2, err := conn.Cmd("HGETALL", battleId + ":enemies:2").Map()
-	//if err != nil {
-	//	fmt.Println("Redis GET command failed")
-	//	log.Fatalln(err)
-	//}
-	//fmt.Println(enemy2)
+
 }

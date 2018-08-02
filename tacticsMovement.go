@@ -104,59 +104,6 @@ func GetMovableSpaces(
 	return movableLocations
 }
 
-func getNextStep(
-	move int,
-	jump int,
-	playerLocation Location,
-	newLocation Location,
-	terrainMap [][]MapTile,
-	enemySpaces []Location,
-	pathSoFar []Location,
-	bestPath *[]Location,
-) {
-	// TODO: a lot of the conditionals below are repeats of algorithm above. extract into function if applicable
-	// TODO: should I use some of the logic below to completely replace the algorithm above?
-	var currentTile = terrainMap[playerLocation.X][playerLocation.Y]
-
-	frontier := []Location{playerLocation}
-	cameFromMap := map[Location]Location{playerLocation: playerLocation}
-	costSoFarMap := map[Location]int{playerLocation: 0}
-
-	// TODO: the below method is only partially done, I need to use cameFromMap and costSoFarMap to reverse-lookup the path
-	for i := 1; i <= move; i++ {
-		for _, frontierPoint := range frontier {
-			for _, direction := range directions {
-
-				// creating the location, making sure it exists, then adding it to the correct group based on cost
-				newLocation := Location{frontierPoint.X+direction.X, frontierPoint.Y+direction.Y}
-				if newLocation.X >= 0 && newLocation.X <= len(terrainMap)-1 &&
-					newLocation.Y >= 0 && newLocation.Y <= len(terrainMap[0])-1 {
-
-					newTile := terrainMap[newLocation.X][newLocation.Y]
-					if !ContainsPoint(frontier, newLocation) &&
-						!ContainsPoint(enemySpaces, newLocation)  {
-						frontier = append(frontier, newLocation)
-						cameFromMap[newLocation] = frontierPoint
-						if newTile.Height-currentTile.Height > jump/2 {
-							costSoFarMap[newLocation] = costSoFarMap[frontierPoint] + 2
-						} else if newTile.Terrain == "deep_water" {
-							costSoFarMap[newLocation] = move
-						} else {
-							costSoFarMap[newLocation] = costSoFarMap[frontierPoint] + 1
-						}
-					}
-				}
-
-			}
-		}
-	}
-
-	fmt.Println(frontier)
-	fmt.Printf("%v \n", costSoFarMap)
-	fmt.Printf("%v \n", cameFromMap)
-
-}
-
 func GetPath(
 	move int,
 	jump int,
