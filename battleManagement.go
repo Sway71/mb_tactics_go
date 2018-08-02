@@ -183,7 +183,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 			enemyTimeGauge,
 		).Err
 		if err != nil {
-			fmt.Println("adding enemies error", currEnemy)
+			fmt.Println("Redis: adding enemies error", currEnemy)
 			log.Fatalln(err)
 		}
 
@@ -208,9 +208,37 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 
 	turnOrder := GetTurnOrder(characterTimeInfo)
 
+	for _, characterTurn := range turnOrder {
+		var characterRef string
+		if characterTurn.IsEnemy {
+			characterRef = battleId + ":enemies:" + strconv.Itoa(characterTurn.Id)
+		} else {
+			characterRef = battleId + ":allies:" + strconv.Itoa(characterTurn.Id)
+		}
+		err = conn.Cmd("HSET", characterRef, "timeGauge", characterTurn.TimeGauge).Err
+		if err != nil {
+			fmt.Println("Redis: updating timeGauges error")
+			log.Fatalln(err)
+		}
+	}
+
+	// TODO: add in hash for current character turn to keep track of id, # of actions taken, and if they're an enemy
+	// actions taken is important, as a character should only be able to
+
+	err = conn.Cmd(
+		"HMSET",
+		battleId + ":activePlayer",
+		"id",
+		turnOrder[0].Id,
+		"isEnemy",
+		turnOrder[0].IsEnemy,
+		"actionsTaken",
+		0,
+	).Err
+
 	json.NewEncoder(w).Encode(struct {
-		BattleId 		string	 		`json:"battleId"`
-		TurnOrder		[]TimeInfo		`json:"turnOrder"`
+		BattleId 			string	 			`json:"battleId"`
+		TurnOrder			[]TimeInfo			`json:"turnOrder"`
 	}{
 		battleId[7:],
 		turnOrder,
