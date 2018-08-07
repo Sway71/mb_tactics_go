@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/mediocregopher/radix.v2/pool"
-)
+	)
 
 type AppHandler struct {
 
@@ -41,6 +41,15 @@ func main() {
 
 	// Router declaration
 	router := vestigo.NewRouter()
+
+	// Setting up router global  CORS policy
+	// These policy guidelines are overriddable at a per resource level shown below
+	router.SetGlobalCors(&vestigo.CorsAccessControl{
+		AllowOrigin:      []string{"*"},
+		AllowCredentials: true,
+		// ExposeHeaders:    []string{"X-Header", "X-Y-Header"},
+		AllowHeaders:     []string{"Access-Control-Allow-Headers", "Content-Type"},
+	})
 
 	// Maps routes
 	router.Get("/maps", mapController.getMaps)

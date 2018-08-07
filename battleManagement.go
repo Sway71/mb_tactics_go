@@ -40,7 +40,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 	}
 
 
-
+	// TODO: find a way to do this dynamically, so we can have a dynamic number of allies and enemies
 	var allies []Character
 	err = bmController.DB.Select(
 		&allies,
@@ -73,7 +73,7 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 	}
 	defer bmController.redisPool.Put(conn)
 
-	// TODO: make a better method for creating a random hash
+	// create battle id to store all pertinent information
 	var battleId string
 	exists := 1
 	for exists == 1 {
@@ -222,9 +222,9 @@ func (bmController *BattleManagementController) initializeBattle(w http.Response
 		}
 	}
 
-	// TODO: add in hash for current character turn to keep track of id, # of actions taken, and if they're an enemy
-	// actions taken is important, as a character should only be able to
+	// TODO: check if any enemies have their turn and handle their moves
 
+	// storing information on character who is taking their turn
 	err = conn.Cmd(
 		"HMSET",
 		battleId + ":activePlayer",

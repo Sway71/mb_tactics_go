@@ -12,17 +12,18 @@ import (
 type Enemy struct {
 	Id 			int				`json:"id"`
 	Name 		string			`json:"name"`
-	Level		int				`json:"level"`
-	Exp			int				`json:"exp"`
-	HP			int				`json:"hp"`
-	MP			int				`json:"mp"`
+	//Level		int				`json:"level"`
+	//Exp			int				`json:"exp"`
+	//HP			int				`json:"hp"`
+	//MP			int				`json:"mp"`
 	MaxHP		int				`json:"maxHp"`
 	MaxMP		int				`json:"maxMp"`
 	Strength	int				`json:"strength"`
 	Speed		int				`json:"speed"`
 	Move		int				`json:"move"`
 	Jump 		int				`json:"jump"`
-	Skills		[]string		`json:"skills"`
+	// TODO: figure out how to convert the skills to an array of strings before returning JSON
+	Skills		[]uint8			`json:"skills"`
 }
 
 type EnemyController struct {
@@ -35,6 +36,8 @@ func (c *EnemyController) getEnemies(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+
 
 	json.NewEncoder(w).Encode(enemies)
 }

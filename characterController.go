@@ -182,7 +182,7 @@ func (c *CharacterController) getMovableSpaces(w http.ResponseWriter, r *http.Re
 	))
 }
 
-// TODO: move to battle management controller.
+// TODO: move to battle management controller or its own movement controller.
 func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 	id := vestigo.Param(r, "id")
 	battleId := vestigo.Param(r, "battleId")
@@ -208,6 +208,31 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer c.redisPool.Put(conn)
+
+	// validate that it is this character's turn
+	actionsTaken, err := conn.Cmd(
+		"HGET",
+		"battle:" + battleId + ":activePlayer",
+		"actionsTaken",
+	).Int()
+	if actionsTaken == 1 || actionsTaken == 3 || err != nil {
+		// not the best response, but it should work for now
+		http.Error(w, err.Error(), 401)
+		return
+	} else {
+		// still unsure, but planning on having move count as a 1 and attack count as 2
+		// thus moved == 1, attacked == 2, attacked and moved == 3, turn just started == 0
+		err := conn.Cmd(
+			"HINCRBY",
+			"battle:" + battleId + ":activePlayer",
+			"actionsTaken",
+			1,
+		).Err
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}
 
 	battlefieldId, err := conn.Cmd("GET", "battle:" + battleId + ":mapId").Str()
 
@@ -253,7 +278,7 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 
 	if validMove {
 
-		// TODO: if the move is valid, use path finding algorithm (A*) to return success message and path
+		// get path to destination, update location and occupied tiles in Redis, then send back the path
 		pathToDestination := GetPath(
 			allyMove,
 			allyJump,
@@ -266,12 +291,15 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 		err = conn.Cmd("SREM", "battle:" + battleId + ":allySpaces", ally[0] + ":" + ally[1]).Err
 		err = conn.Cmd("SADD", "battle:" + battleId + ":allySpaces", strconv.Itoa(location.X) + ":" + strconv.Itoa(location.Y)).Err
 		err = conn.Cmd("HMSET", "battle:" + battleId + ":allies:" + id, "x", location.X, "y", location.Y).Err
+
+		//
+		//err = conn.Cmd("HINCRBY", "battle:" + battleId + ":allies:" + id, ).Err
 		if err != nil {
 			// TODO: decide on proper error to throw
 			fmt.Println("error trying to update new ally location in Redis")
 		}
-		allyValues, _ := conn.Cmd("HGETALL", "battle:" + battleId + ":allies:" + id).List()
-		fmt.Println(allyValues)
+		//allyValues, _ := conn.Cmd("HGETALL", "battle:" + battleId + ":allies:" + id).List()
+		//fmt.Println(allyValues)
 
 		json.NewEncoder(w).Encode(struct {
 			Success 			bool			`json:"success"`
@@ -288,11 +316,63 @@ func (c *CharacterController) move(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 }
-//
-//func (c *CharacterController) attack(w http.ResponseWriter, r *http.Request) {
-//
-//}
-//
+
+// TODO: move to battle management controller or its own attack controller.
+func (c *CharacterController) attack(w http.ResponseWriter, r *http.Request) {
+	// id := vestigo.Param(r, "id")
+	battleId := vestigo.Param(r, "battleId")
+
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	var location Location
+	err = json.Unmarshal(b, &location)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	conn, err := c.redisPool.Get()
+	if err != nil {
+		fmt.Println("couldn't get Redis pool connection")
+		log.Fatalln(err)
+		return
+	}
+	defer c.redisPool.Put(conn)
+
+	// validate that it is this character's turn
+
+	actionsTaken, err := conn.Cmd(
+		"HGET",
+		"battle:" + battleId + ":activePlayer",
+		"actionsTaken",
+	).Int()
+	if actionsTaken == 2 || actionsTaken == 3 || err != nil {
+		// not the best response, but it should work for now
+		http.Error(w, err.Error(), 401)
+		return
+	} else {
+		// still unsure, but planning on having move count as a 1 and attack count as 2
+		// thus moved == 1, attacked == 2, attacked and moved == 3, turn just started == 0
+		err := conn.Cmd(
+			"HINCRBY",
+			"battle:" + battleId + ":activePlayer",
+			"actionsTaken",
+			2,
+		).Err
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}
+
+
+}
+
 //func (c *CharacterController) special(w http.ResponseWriter, r *http.Request) {
 //
 //}
